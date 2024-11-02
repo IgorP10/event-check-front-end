@@ -1,30 +1,38 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+  <v-app>
+    <v-main>
+      <router-view />
+      <v-snackbar v-model="snackbar.visible" :color="snackbar.type" timeout="3000">
+        {{ snackbar.message }}
+        <template v-slot:action="{ attrs }">
+          <v-btn icon v-bind="attrs" @click="closeSnackbar">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </template>
+      </v-snackbar>
+    </v-main>
+  </v-app>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script lang="ts">
+import { defineComponent, computed } from 'vue'
+import { useStore } from 'vuex';
 
-nav {
-  padding: 30px;
-}
+export default defineComponent({
+  name: 'App',
+  setup() {
+    const store = useStore();
+    const snackbar = computed(() => store.getters['notifications/getSnackbar']);
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+    const closeSnackbar = () => {
+      store.dispatch('notifications/clearNotification');
+    }
 
-nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+    return {
+      snackbar,
+      closeSnackbar
+    }
+  }
+
+})
+</script>
