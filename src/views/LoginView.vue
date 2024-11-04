@@ -22,13 +22,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 
 export default defineComponent({
     name: 'LoginView',
     setup() {
+
+        onMounted(() => {
+            const store = useStore();
+            if (store.getters['user/isAuthenticated']) {
+                router.push({ name: 'Events' });
+            }
+        });
+
         const store = useStore();
         const router = useRouter();
         const email = ref('');

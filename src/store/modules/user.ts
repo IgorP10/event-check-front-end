@@ -3,21 +3,40 @@ import { RootState } from '@/types/rootState';
 import { apiService } from '@/services/apiService';
 
 export interface UserState {
-  token: string | null;
+  token: {
+    accessToken: {
+      name: string;
+      abilities: string[];
+      expires_at: string;
+      tokenable_id: number;
+      tokenable_type: string;
+      updated_at: string;
+      created_at: string;
+      id: number;
+    };
+    plainTextToken: string;
+  } | null;
 }
-
 const user: Module<UserState, RootState> = {
   namespaced: true,
   state: {
-    token: localStorage.getItem('token') || null,
+    token: JSON.parse(localStorage.getItem('token') || 'null'),
   },
   getters: {
-    isAuthenticated: (state) => !!state.token,
+    isAuthenticated: (state) => {
+      if (!state.token) {
+        return false;
+      }
+
+      const expirationDate = new Date(state.token.accessToken.expires_at);
+      return new Date() < expirationDate;
+    },
+    getToken: (state) => state.token,
   },
   mutations: {
-    setToken(state, token: string) {
+    setToken(state, token: UserState['token']) {
       state.token = token;
-      localStorage.setItem('token', token);
+      localStorage.setItem('token', JSON.stringify(token));
     },
     clearToken(state) {
       state.token = null;
