@@ -2,9 +2,19 @@
     <v-container fluid class="pa-0">
         <HeaderComponent title="Detalhes do Evento" />
 
-        <v-row class="d-flex justify-center pa-4">
+        <v-row class="d-flex justify-center pa-4" v-if="isLoading">
+            <v-col cols="12" class="text-center">
+                <v-progress-circular indeterminate color="primary" size="70" />
+            </v-col>
+        </v-row>
+
+        <v-row class="d-flex justify-center pa-4" v-else>
             <v-col cols="12" md="8" lg="6">
                 <EventDetails v-if="event" :event="event" :eventId="eventId" />
+
+                <v-alert v-else type="error" outlined>
+                    {{ error || `Evento com ID ${eventId} não foi encontrado.` }}
+                </v-alert>
 
                 <v-btn @click="goBack" color="primary" outlined block>
                     Voltar
@@ -15,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onMounted } from 'vue';
+import { defineComponent, ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 import HeaderComponent from '@/components/Header.vue';
@@ -32,16 +42,31 @@ export default defineComponent({
         const router = useRouter();
         const route = useRoute();
 
-        const eventId = computed(() => Number(route.params.id));
-        const event = computed(() => store.getters['events/getEvent']);
+        const eventId = Number(route.params.id);
+        const event = ref(null);
+        const isLoading = ref(true);
+        const error = ref<string | null>(null);
 
         const goBack = () => {
             router.push({ name: 'Events' });
         };
 
         onMounted(async () => {
-            if (eventId.value) {
-                await store.dispatch('events/fetchEventById', eventId.value);
+            if (eventId) {
+                try {
+                    isLoading.value = true;
+
+                    const result = await store.dispatch('events/fetchEventById', eventId);
+                    event.value = result;
+                } catch (err) {
+                    error.value = 'Erro ao carregar os detalhes do evento.';
+                    console.error(err);
+                } finally {
+                    isLoading.value = false;
+                }
+            } else {
+                error.value = 'ID do evento inválido.';
+                isLoading.value = false;
             }
         });
 
@@ -49,6 +74,8 @@ export default defineComponent({
             event,
             eventId,
             goBack,
+            isLoading,
+            error,
         };
     },
 });

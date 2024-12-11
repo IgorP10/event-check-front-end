@@ -38,6 +38,7 @@ const events: Module<EventsState, RootState> = {
                 const event = await apiService.fetchEventById(id);
                 commit('setEvent', event);
                 this.dispatch('notifications/notify', { message: 'Evento buscado com sucesso', type: 'success' });
+                return event;
             } catch (error) {
                 this.dispatch('notifications/notify', { message: 'Erro ao busca evento', type: 'error' });
             }
