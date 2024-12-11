@@ -1,5 +1,5 @@
 import { Module } from 'vuex';
-import { Event } from '@/types/event';
+import { Event, CreateEvent } from '@/types/event';
 import { RootState } from '@/types/rootState';
 import { apiService } from '@/services/apiService'
 
@@ -40,6 +40,15 @@ const events: Module<EventsState, RootState> = {
                 this.dispatch('notifications/notify', { message: 'Evento buscado com sucesso', type: 'success' });
             } catch (error) {
                 this.dispatch('notifications/notify', { message: 'Erro ao busca evento', type: 'error' });
+            }
+        },
+        async createEvent({ commit }, event: CreateEvent) {
+            try {
+                const newEvent = await apiService.createEvent(event);
+                commit('setEvent', newEvent);
+                this.dispatch('notifications/notify', { message: 'Evento criado com sucesso', type: 'success' });
+            } catch (error) {
+                this.dispatch('notifications/notify', { message: 'Erro ao criar evento', type: 'error' });
             }
         },
     },

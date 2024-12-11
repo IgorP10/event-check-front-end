@@ -1,41 +1,53 @@
 <template>
-    <v-container>
-        <EventDetails v-if="event" :event="event" :eventId="eventId">
-            <template #actions>
-                <v-btn @click="goBack">Voltar</v-btn>
-            </template>
-        </EventDetails>
+    <v-container fluid class="pa-0">
+        <HeaderComponent title="Detalhes do Evento" />
+
+        <v-row class="d-flex justify-center pa-4">
+            <v-col cols="12" md="8" lg="6">
+                <EventDetails v-if="event" :event="event" :eventId="eventId" />
+
+                <v-btn @click="goBack" color="primary" outlined block>
+                    Voltar
+                </v-btn>
+            </v-col>
+        </v-row>
     </v-container>
 </template>
 
 <script lang="ts">
 import { defineComponent, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+import HeaderComponent from '@/components/Header.vue';
 import EventDetails from '@/components/EventDetails.vue';
 
 export default defineComponent({
     name: 'EventDetailsView',
     components: {
+        HeaderComponent,
         EventDetails,
     },
     setup() {
         const store = useStore();
         const router = useRouter();
+        const route = useRoute();
 
-        const event = computed(() => store.getters.getEvent);
-
-        onMounted(() => {
-            store.dispatch('events/fetchEventById', Number(router.currentRoute.value.params.id));
-        });
+        const eventId = computed(() => Number(route.params.id));
+        const event = computed(() => store.getters['events/getEvent']);
 
         const goBack = () => {
-            router.push({ name: 'events' });
+            router.push({ name: 'Events' });
         };
+
+        onMounted(async () => {
+            if (eventId.value) {
+                await store.dispatch('events/fetchEventById', eventId.value);
+            }
+        });
 
         return {
             event,
-            eventId: Number(router.currentRoute.value.params.id),
+            eventId,
             goBack,
         };
     },

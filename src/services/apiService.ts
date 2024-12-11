@@ -1,5 +1,6 @@
 import api from "@/api/axiosConfig";
 import router from "@/router";
+import { CreateEvent } from "@/types/event";
 import { useStore } from 'vuex';
 
 
@@ -20,12 +21,21 @@ export const apiService = {
             console.error("Error fetching event:", error);
         }
     },
+    async createEvent(event: CreateEvent) {
+        try {
+            const response = await api.post("/events", event);
+            return response.data;
+        } catch (error) {
+            console.error("Error creating event:", error);
+        }
+    },
     async login(credentials: { email: string; password: string }) {
         try {
             const response = await api.post("/auth/login", credentials);
             return response.data.token;
         } catch (error) {
             console.error("Error logging in:", error);
+            return false;
         }
     },
     async register(user: { name: string, email: string, password: string, password_confirmation: string }) {
@@ -37,7 +47,7 @@ export const apiService = {
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem("token");
     if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+        config.headers.Authorization = `Bearer ${JSON.parse(token).plainTextToken}`;
     }
 
     return config;

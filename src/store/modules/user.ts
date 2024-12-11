@@ -17,14 +17,23 @@ export interface UserState {
     plainTextToken: string;
   } | null;
 }
+
 const user: Module<UserState, RootState> = {
   namespaced: true,
   state: {
-    token: JSON.parse(localStorage.getItem('token') || 'null'),
+    token: (() => {
+      const storedToken = localStorage.getItem('token');
+      try {
+        return storedToken ? JSON.parse(storedToken) : null;
+      } catch (e) {
+        console.error('Erro ao parsear o token:', e);
+        return null;
+      }
+    })()
   },
   getters: {
     isAuthenticated: (state) => {
-      if (!state.token) {
+      if (!state.token?.accessToken?.expires_at) {
         return false;
       }
 
@@ -47,6 +56,11 @@ const user: Module<UserState, RootState> = {
     async login({ commit, dispatch }, credentials: { email: string; password: string }) {
       try {
         const token = await apiService.login(credentials);
+
+        if (!token) {
+          throw new Error('Token não recebido');
+        }
+
         commit('setToken', token);
         dispatch('notifications/notify', { message: 'Login bem-sucedido', type: 'success' }, { root: true });
       } catch (error) {

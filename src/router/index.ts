@@ -3,6 +3,7 @@ import LoginView from '@/views/LoginView.vue';
 import RegisterView from '@/views/RegisterView.vue';
 import EventDetailsView from '@/views/EventDetailsView.vue';
 import EventsListView from '@/views/EventsListView.vue';
+import CreateEventView from '@/views/CreateEventView.vue';
 import { useStore } from 'vuex';
 
 const routes: Array<RouteRecordRaw> = [
@@ -16,11 +17,12 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Register',
     component: RegisterView,
   },
-  // {
-  //   path: '/events/create',
-  //   name: 'CreateEvent',
-  //   component: CreateEventView,
-  // },
+  {
+    path: '/events/create',
+    name: 'CreateEvent',
+    component: CreateEventView,
+    meta: { requiresAuth: true },
+  },
   {
     path: '/events',
     name: 'Events',
