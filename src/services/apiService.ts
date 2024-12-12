@@ -1,5 +1,6 @@
 import api from "@/api/axiosConfig";
 import router from "@/router";
+import { MarkAttendance } from "@/types/attendance";
 import { CreateEvent } from "@/types/event";
 import { useStore } from 'vuex';
 
@@ -27,6 +28,21 @@ export const apiService = {
             return response.data;
         } catch (error) {
             console.error("Error creating event:", error);
+        }
+    },
+    async fetchAttendances(eventId: number) {
+        try {
+            const response = await api.get(`/events/${eventId}/attendances`);
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching attendances:", error);
+        }
+    },
+    async markAttendance(attendance: MarkAttendance) {
+        try {
+            await api.post("/attendances", attendance);
+        } catch (error) {
+            console.error("Error marking attendance:", error);
         }
     },
     async login(credentials: { email: string; password: string }) {

@@ -30,7 +30,7 @@
                                     <template v-if="isLoading">
                                         <v-progress-circular indeterminate size="20" color="white" class="mr-2" />
                                     </template>
-                                    Criar Evento
+                                    Marcar Presença
                                 </v-btn>
                             </v-col>
                             <v-col>

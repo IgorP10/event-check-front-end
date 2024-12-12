@@ -4,11 +4,9 @@
       <router-view />
       <v-snackbar v-model="snackbar.visible" :color="snackbar.type" timeout="3000">
         {{ snackbar.message }}
-        <template v-slot:action="{ attrs }">
-          <v-btn icon v-bind="attrs" @click="closeSnackbar">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </template>
+        <span class="close-icon" @click="closeSnackbar">
+          <v-icon :color="COLORS.GRAY_100">mdi-close</v-icon>
+        </span>
       </v-snackbar>
     </v-main>
   </v-app>
@@ -17,6 +15,8 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue'
 import { useStore } from 'vuex';
+import { COLORS } from '@/styles/colors'
+
 
 export default defineComponent({
   name: 'App',
@@ -30,9 +30,20 @@ export default defineComponent({
 
     return {
       snackbar,
+      COLORS,
       closeSnackbar
     }
   }
-
 })
 </script>
+
+<style scoped>
+.close-icon {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+</style>

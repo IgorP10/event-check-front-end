@@ -1,10 +1,8 @@
 <template>
   <v-container>
-    <v-row class="mb-4">
-      <HeaderComponent title="Listagem de Eventos" />
-    </v-row>
+    <HeaderComponent title="Listagem de Eventos" />
 
-    <v-row class="mb-2 d-flex align-center">
+    <v-row class="mb-2 mt-4 d-flex align-center">
       <v-col cols="12" class="d-flex justify-end">
         <v-btn color="primary" @click="createEvent">Criar Evento</v-btn>
       </v-col>
@@ -12,15 +10,17 @@
 
     <v-row>
       <v-col cols="12">
-        <v-card-title>Eventos</v-card-title>
-        <v-data-table :headers="headers" :items="events" :loading="isLoading" class="elevation-1"
-          no-data-text="Nenhum evento encontrado" loading-text="Carregando eventos...">
-          <template v-slot:[`item.action`]="{ item }">
-            <v-btn icon size="x-small" color="primary" @click="viewEvent(item.id)">
-              <v-icon>mdi-eye</v-icon>
-            </v-btn>
-          </template>
-        </v-data-table>
+        <v-card outlined>
+          <v-card-title>Eventos</v-card-title>
+          <v-data-table :headers="headers" :items="events" :loading="isLoading" class="elevation-1"
+            no-data-text="Nenhum evento encontrado" loading-text="Carregando eventos...">
+            <template v-slot:[`item.action`]="{ item }">
+              <v-btn icon size="x-small" color="primary" @click="viewEvent(item.id)">
+                <v-icon>mdi-eye</v-icon>
+              </v-btn>
+            </template>
+          </v-data-table>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
