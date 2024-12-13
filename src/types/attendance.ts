@@ -1,9 +1,9 @@
 export interface MarkAttendance {
     name: string;
     role?: string;
-    congragation: string;
+    congregation: string;
 }
 
 export interface Attendance extends MarkAttendance {
-    id: number;
+    event_id: number;
 }

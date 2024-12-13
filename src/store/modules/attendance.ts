@@ -29,8 +29,10 @@ const Attendances: Module<AttendancesState, RootState> = {
         async markAttendance(_, attendance: MarkAttendance) {
             try {
                 await apiService.markAttendance(attendance);
+                this.dispatch('notifications/notify', { message: 'Presença marcada com sucesso', type: 'success' });
             } catch (error) {
-                console.error('Error marking attendance:', error);
+                this.dispatch('notifications/notify', { message: 'Erro ao marcar presença', type: 'error' });
+                throw new Error('Error marking attendance');
             }
         },
     },

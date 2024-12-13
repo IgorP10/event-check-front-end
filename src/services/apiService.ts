@@ -39,11 +39,7 @@ export const apiService = {
         }
     },
     async markAttendance(attendance: MarkAttendance) {
-        try {
-            await api.post("/attendances", attendance);
-        } catch (error) {
-            console.error("Error marking attendance:", error);
-        }
+        await api.post("/attendances", attendance);
     },
     async login(credentials: { email: string; password: string }) {
         try {

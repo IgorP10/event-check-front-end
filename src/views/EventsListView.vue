@@ -18,11 +18,19 @@
               <v-btn icon size="x-small" color="primary" @click="viewEvent(item.id)">
                 <v-icon>mdi-eye</v-icon>
               </v-btn>
+              <!-- Ícone de Compartilhar -->
+              <v-btn icon size="x-small" color="primary" @click="openShareModal(item.id)">
+                <v-icon>mdi-share</v-icon>
+              </v-btn>
+
             </template>
           </v-data-table>
         </v-card>
       </v-col>
     </v-row>
+
+    <!-- Modal de Compartilhar -->
+    <ShareModal :visible="modalVisible" :eventId="currentEventId" @update:visible="modalVisible = $event" />
   </v-container>
 </template>
 
@@ -31,20 +39,22 @@ import { defineComponent, onMounted, computed, ref } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import HeaderComponent from '@/components/Header.vue';
+import ShareModal from '@/components/ShareModal.vue';
 import { Event } from '@/types/event';
 
 export default defineComponent({
   name: 'EventsListView',
-
   components: {
     HeaderComponent,
+    ShareModal,
   },
-
   setup() {
     const store = useStore();
     const router = useRouter();
     const isLoading = ref(true);
     const events = computed<Event[]>(() => store.getters['events/getEvents']);
+    const modalVisible = ref(false);
+    const currentEventId = ref<number | undefined>(undefined);
 
     onMounted(async () => {
       isLoading.value = true;
@@ -67,7 +77,18 @@ export default defineComponent({
       router.push({ name: 'CreateEvent' });
     };
 
-    return { events, headers, createEvent, viewEvent, isLoading };
+    const openShareModal = (eventId: number) => {
+      console.log('Abrindo modal de compartilhamento para o evento:', eventId);
+      if (eventId !== undefined) {
+        modalVisible.value = true;
+        currentEventId.value = eventId;
+      }
+
+      console.log('Modal visível:', modalVisible.value);
+    };
+
+
+    return { events, headers, createEvent, viewEvent, isLoading, modalVisible, currentEventId, openShareModal };
   },
 });
 </script>
